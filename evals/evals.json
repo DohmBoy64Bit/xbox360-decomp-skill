@@ -1,0 +1,47 @@
+{
+  "skill_name": "xbox360-decomp",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "rexglue build works but exe dies at guest 0x82701234 with unregistered VA — i've tried nulling the hook twice. Guardian Heroes XBLA port, ReXGlue track. what next?",
+      "expected_output": "Triggers stuck protocol: cross-recomp/repomix/SDK search before another local patch; asks for log lines; maps VA to Ghidra/generated; cites SDK if suggesting hook API; does not invent config fields",
+      "files": [],
+      "expectations": [
+        "References stuck loop, repomix, SDK, or web search before another patch",
+        "Requests log, disassembly, or Ghidra at the guest PC",
+        "Does not assert ReXGlue hook macro names without a local SDK file:line"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "need to set up ghidra mcp for default.xex in this repo, cursor. xex base might be 0x82000000",
+      "expected_output": "Loads ghidra-mcp reference; verification checklist; does not invent MCP JSON; backs up existing .cursor/mcp.json",
+      "files": [],
+      "expectations": [
+        "Mentions XEXLoaderWV, image base verification, or GhidraMCP health check",
+        "Says to backup or merge .cursor/mcp.json, not overwrite blindly"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "write me a fibonacci function in python for homework",
+      "expected_output": "Does not load Xbox skill workflow; simple Python help without ReXGlue/Ghidra/XEX detour",
+      "files": [],
+      "expectations": [
+        "No ReXGlue, XEX, Ghidra setup, or track selection for this task",
+        "Includes a working fibonacci example in Python"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "starting guardian heroes xbla from a LIVE package — want to use 360tools like simpsons arcade. what order do i run scripts before xenonrecomp?",
+      "expected_output": "Track D: extract_stfs -> extract_pe -> find_abi_addrs -> patched XenonRecomp -> switch/vtable scripts -> ReXGlue template; cites track-360tools.md; does not invent script flags",
+      "files": [],
+      "expectations": [
+        "Lists extract_stfs or extract_iso then extract_pe before XenonRecomp",
+        "References 360tools repo or sp00nznet pipeline",
+        "Mentions ReXGlue SDK or templates/project after CPU codegen"
+      ]
+    }
+  ]
+}
