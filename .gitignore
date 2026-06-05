@@ -1,3 +1,6 @@
+# VCS (never ship in .skill)
+.git/
+
 # OS / editor
 .DS_Store
 Thumbs.db
