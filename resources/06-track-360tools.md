@@ -104,7 +104,7 @@ python tools/parse_xex_imports.py output_dir\default.xex
 git clone --recursive https://github.com/rexglue/rexglue-sdk.git tools\rexglue-sdk
 ```
 
-Build/install per SDK README. Patches in **360toolsUpdated/patches/** target **ReXGlue SDK** (audited for SDK v0.8.0 in `rexglue_patches_audit.md`):
+Build/install per SDK README. **Optional** ReXGlue SDK patches — skill-bundled `patches/` or **360toolsUpdated/patches/** (same files). Read `25-rexglue-sdk-patches.md` for source-of-truth gating; full audit in `patches/rexglue_patches_audit.md` (SDK v0.8.0 baseline):
 
 | Patch | Purpose | Audit conclusion |
 |-------|---------|------------------|
@@ -114,7 +114,7 @@ Build/install per SDK README. Patches in **360toolsUpdated/patches/** target **R
 | `0004-fix-d3d12-missing-uav-barriers.patch` | UAV barrier on same-state transitions | Needed for EDRAM-heavy titles |
 | `0005-ppc-setjmp-non-volatiles.patch` | `ppc_setjmp`/`ppc_longjmp` save PPC non-volatiles | Critically needed if game uses setjmp |
 
-Apply with `git apply` from SDK root after verifying paths; re-read audit file for target commit `e8ce24fa73cd7c1ede80262c06f34893b7963dbe` or your actual checkout.
+Apply with `git apply --check` then `git apply` from SDK root **only for patches evidence supports** — do not apply all five on every title. Re-read audit + `25-rexglue-sdk-patches.md` for target commit `e8ce24fa73cd7c1ede80262c06f34893b7963dbe` or your actual checkout.
 
 ### Phase D3: Initialize project
 
@@ -192,7 +192,7 @@ From `docs/speed-fix.md` and README:
 
 ### Phase D8: Bring-up and ledgers
 
-Same discipline as Track A: `docs/address_ledger.md`, `docs/regression_log.md`, [debug-triage.md](debug-triage.md), [stuck-cross-recomp.md](stuck-cross-recomp.md).
+Same discipline as Track A: `docs/address_ledger.md`, `docs/regression_log.md`, [13-debug-triage.md](13-debug-triage.md), [12-stuck-cross-recomp.md](12-stuck-cross-recomp.md).
 
 Failure layer map (current fork):
 

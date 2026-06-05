@@ -10,6 +10,7 @@ Phase R0: SDK and repository audit
 - Record SDK version/commit/nightly.
 - Run or inspect `rexglue --help`.
 - Identify whether this project uses direct CLI codegen or a CMake codegen target.
+- Optional SDK patches: `25-rexglue-sdk-patches.md` + skill `patches/` — apply per symptom/upstream check; record in `docs/toolchain.md`.
 
 Phase R1: Asset placement
 - Create ignored `assets/`.

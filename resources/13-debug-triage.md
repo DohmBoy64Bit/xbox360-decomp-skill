@@ -29,7 +29,7 @@ MCP frontend config path guessed incorrectly or overwritten without backup
 Wrong direct-CLI vs CMake-codegen-target assumption
 Built exe cannot locate assets because runtime expects a different working directory or asset argument
 Extract failed (Track D: re-run extract_stfs.py / extract_xex_direct.py / xex_info.py)
-Missing ReXGlue SDK patch (Track D: see patches/rexglue_patches_audit.md — setjmp, switch discovery, D3D12 UAV)
+Missing ReXGlue SDK patch (see `25-rexglue-sdk-patches.md` — 0001 switch discovery, 0002 kernel alloc, 0005 setjmp, 0003/0004 GPU; apply only when source of truth confirms)
 VdSwap half-speed (Track D: docs/speed-fix.md QPC limiter — not legacy __rdtsc scaling)
 ```
 
@@ -50,7 +50,7 @@ Documentation/test process
 
 ## Stuck on the same failure
 
-If the same crash, unregistered VA, or GPU/boot blocker appears twice without new evidence, stop patching locally. Follow [stuck-cross-recomp.md](stuck-cross-recomp.md) (repomix/SDK/web, then Ghidra + original game tree + `generated/` + hooks). Cite the source that justified the next change.
+If the same crash, unregistered VA, or GPU/boot blocker appears twice without new evidence, stop patching locally. Follow [12-stuck-cross-recomp.md](12-stuck-cross-recomp.md) (repomix/SDK/web, then Ghidra + original game tree + `generated/` + hooks). Cite the source that justified the next change.
 
 ## Build System
 

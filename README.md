@@ -10,8 +10,9 @@ This skill is a **methodology and reference layer** for the AI agent. It does **
 
 | Included in the skill | Not included (you provide separately) |
 |----------------------|----------------------------------------|
-| `SKILL.md` — track selection, evidence rules, stuck loop | Clones of [rexglue-sdk](https://github.com/rexglue/rexglue-sdk), [360toolsUpdated](https://github.com/DohmBoy64Bit/360toolsUpdated); XenonRecomp only for Track B |
-| `references/` — Ghidra MCP, tracks, debug triage, XBLA/STFS | `default.xex`, STFS/LIVE packages, extracted assets (you must own the game) |
+| `SKILL.md` — PS2-style hub (decision router, boot sequence, prohibitions) | Clones of [rexglue-sdk](https://github.com/rexglue/rexglue-sdk), [360toolsUpdated](https://github.com/DohmBoy64Bit/360toolsUpdated); XenonRecomp only for Track B |
+| `resources/` — numbered deep refs (tracks, Ghidra, triage, guardrails) | `default.xex`, STFS/LIVE packages, extracted assets (you must own the game) |
+| `scripts/project-state-template.md` → `XBOX360_PROJECT_STATE.md` | Persistent session memory in your port repo |
 | `evals/evals.json` (development only) | Ghidra, CMake, Clang/MSVC, Python per your track |
 
 ---
@@ -22,7 +23,7 @@ This skill is a **methodology and reference layer** for the AI agent. It does **
 - **Lawful game files** — do not commit or redistribute retail XEX/assets
 - Tooling depends on track: ReXGlue SDK, [360toolsUpdated](https://github.com/DohmBoy64Bit/360toolsUpdated), Ghidra 12.x + XEXLoaderWV + GhidraMCP; XenonRecomp for Track B only
 
-See `references/dev-environment.md` and per-track files under `references/`.
+See `resources/01-dev-environment.md` and per-track files under `resources/` (index: `resources/db-xbox360-index.md`).
 
 ---
 
@@ -47,7 +48,7 @@ The folder must contain `SKILL.md` at its root.
 | What it is | What it is for |
 |------------|----------------|
 | ZIP archive (`.skill` extension) | One-file install in Cursor |
-| `SKILL.md` + `references/` | Agent playbook for 360 RE / recomp |
+| `SKILL.md` + `resources/` + `scripts/` | Agent playbook for 360 RE / recomp |
 | Does **not** include upstream toolkits | Clone ReXGlue SDK and 360toolsUpdated separately |
 
 **Steps:**
@@ -90,26 +91,31 @@ The agent should verify commands and APIs from **your local SDK/tool trees**, no
 | **C** | Ghidra / matching / decomp.me → handwritten C++ |
 | **D** | 360toolsUpdated extract → `rexglue init` / `codegen` → optional `templates/advanced/` + SDK patches |
 
-Track D (current) is ReXGlue-native — no XenonRecomp step. Legacy sp00nznet/360tools XenonRecomp path is documented in `references/track-360tools.md`.
+Track D (current) is ReXGlue-native — no XenonRecomp step. Legacy sp00nznet/360tools XenonRecomp path is in `resources/06-track-360tools.md` (§ Legacy).
 
 ---
 
-## Skill layout
+## Skill layout (v1.4+ — PS2-style)
+
+Modeled after [ps2-recomp-Agent-SKILL](https://github.com/hkmodd/ps2-recomp-Agent-SKILL): lean hub + numbered `resources/`.
 
 ```
 xbox360-decomp/
 ├── README.md
-├── SKILL.md
-├── evals/evals.json
-└── references/
-    ├── track-rexglue.md
-    ├── track-xenon.md
-    ├── track-full-decomp.md
-    ├── track-360tools.md
-    ├── ghidra-mcp.md
-    ├── stuck-cross-recomp.md
-    ├── debug-triage.md
-    └── …
+├── SKILL.md                 # §1 router, §2 boot, §3–§10 constraints
+├── scripts/
+│   └── project-state-template.md   # → XBOX360_PROJECT_STATE.md in port repo
+├── evals/evals.json         # dev only (not in .skill package)
+└── resources/
+    ├── 01-dev-environment.md
+    ├── 02-xbla-stfs.md
+    ├── 03-track-rexglue.md … 06-track-360tools.md
+    ├── 07-ghidra-mcp.md … 09-original-game-evidence.md
+    ├── 10-agent-guardrails.md
+    ├── 11-operational-phases.md
+    ├── 12-stuck-cross-recomp.md … 24-ledgers-confidence.md
+    ├── 22-decisional-brain.md
+    └── db-xbox360-index.md   # master router
 ```
 
 ---
@@ -128,7 +134,7 @@ xbox360-decomp/
 
 | Artifact | Purpose |
 |----------|---------|
-| **This Git repo** | Source for `SKILL.md`, references, README |
+| **This Git repo** | Source for `SKILL.md`, `resources/`, README |
 | **Release `xbox360-decomp.skill`** | Pre-built ZIP for Cursor install |
 | **Upstream toolkits** | ReXGlue SDK, 360toolsUpdated — always separate |
 
@@ -154,7 +160,7 @@ cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release
 ```
 
-Optional: `xex_info.py` / `parse_xex_imports.py` before codegen; copy `templates/advanced/` after init; VdSwap QPC fix in `docs/speed-fix.md`. Legacy XenonRecomp path (`extract_pe`, `post_codegen`) is **sp00nznet/360tools only** — see `references/track-360tools.md`.
+Optional: `xex_info.py` / `parse_xex_imports.py` before codegen; copy `templates/advanced/` after init; VdSwap QPC fix in `docs/speed-fix.md`. Legacy XenonRecomp path (`extract_pe`, `post_codegen`) is **sp00nznet/360tools only** — see `resources/06-track-360tools.md`.
 
 ---
 
@@ -166,8 +172,12 @@ Built with **skill-creator**. Test prompts: `evals/evals.json`. Benchmark runs l
 |-----------|---------------|--------|
 | 1 | v1.2.0 | 100% pass both configs; Track D eval still used legacy XenonRecomp order |
 | 2 | v1.3.0 | 100% pass both configs; **Track D eval fixed** — `extract_stfs` → `rexglue codegen`; stuck eval cites SDK `file:line` |
+| 3 | v1.4.1 | 6 evals; with_skill **100%** vs without_skill **50%** (+50pp delta) |
+| 4 | v1.4.2 | 7 evals inline (+ optional SDK patches) |
+| 5 | v1.4.2 | **7 evals live subagents (Auto)** — with_skill **100%** vs without_skill **82%** (+18pp) |
+| 6 | v1.4.3 | **7 evals, isolated baselines** — with_skill **100%** vs without_skill **75%** (+25pp); session-boot without_skill **0/3** |
 
-Review HTML: `xbox360-decomp-workspace/iteration-2/review.html` (compare vs iteration-1).
+Review HTML: `xbox360-decomp-workspace/iteration-6/review.html` (compare vs iteration-5).
 
 To repackage after edits:
 
@@ -179,6 +189,24 @@ python -m scripts.package_skill _pkg\xbox360-decomp release
 ---
 
 ## Changelog
+
+### v1.4.3
+- Eval iteration-6: isolated without_skill baselines (must not read skill dir); **100% / 75%** with_skill vs without_skill
+- Document **0005** cumulative-rollup caveat in `resources/25-rexglue-sdk-patches.md` (`git apply --check` often fails on clean SDK)
+
+### v1.4.2
+- Bundled optional ReXGlue SDK patches: `patches/0001`–`0005` + `rexglue_patches_audit.md`
+- New `resources/25-rexglue-sdk-patches.md` — source-of-truth gate; apply per symptom/title, not all five blindly
+- Eval iteration-4 adds `optional-sdk-patches` eval
+
+### v1.4.1
+- Parity pass: restore v1.3.1 hub content into `resources/` where PS2-style files were too thin (`11`, `22`, `23`, `24`, `10` §0) without bloating `SKILL.md`
+
+### v1.4.0
+- **PS2-style refactor** ([hkmodd/ps2-recomp-Agent-SKILL](https://github.com/hkmodd/ps2-recomp-Agent-SKILL)): lean `SKILL.md` hub with decision router, boot sequence, prohibitions, build gate, state protocol
+- `references/` → numbered `resources/` (01–24 + `db-xbox360-index.md`); feature parity preserved
+- New: `10-agent-guardrails.md`, `11-operational-phases.md`, `22-decisional-brain.md`, `23-xenon-execution-discipline.md`, `24-ledgers-confidence.md`
+- New: `scripts/project-state-template.md` for `XBOX360_PROJECT_STATE.md`
 
 ### v1.3.1
 - README: Track D quick pipeline, eval iteration summary, repackage notes

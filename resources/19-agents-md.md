@@ -13,7 +13,8 @@ Document only verified facts:
 - Build, generation, analysis, run, and verification commands.
 - Tool versions or pinned commits.
 - Ghidra/XEXLoaderWV/GhidraMCP setup requirements, including Ghidra version, XEXLoaderWV extension path/version, GhidraMCP extension path/version, bridge command, MCP client config location, frontend name, and transport.
-- Frontend rule/instruction file path, such as `AGENTS.md`, `.cursor/rules/*.mdc`, `.cursor/skills/xbox360-decomp/SKILL.md`, `.gemini/AGENTS.md`, `CLAUDE.md`, or another verified project-specific instruction file.
+- Frontend rule/instruction file path, such as `AGENTS.md`, `XBOX360_PROJECT_STATE.md`, `.cursor/rules/*.mdc`, `.cursor/skills/xbox360-decomp/SKILL.md`, `.gemini/AGENTS.md`, `CLAUDE.md`, or another verified project-specific instruction file.
+- Skill resource index: `resources/db-xbox360-index.md` in the installed `xbox360-decomp` skill — load on demand, not all at once.
 - Address mapping conventions for guest virtual addresses, XEX image offsets, generated code, guest memory, runtime assets, and host pointers.
 - Hook, runtime, renderer, audio, input, filesystem, save, and crash-analysis conventions.
 - Known failure triage and next expected failure points.

@@ -5,7 +5,7 @@ Static recompilation mistakes often come from naming or behavior invented withou
 ### Evidence order for “what does the game do?”
 
 1. **Raw PPC** at the guest address (Ghidra listing or export).
-2. **GhidraMCP** function boundary, xrefs, callers/callees, switch/vtable targets (see [ghidra-evidence.md](ghidra-evidence.md)).
+2. **GhidraMCP** function boundary, xrefs, callers/callees, switch/vtable targets (see [08-ghidra-evidence.md](08-ghidra-evidence.md)).
 3. **Project original-analysis tree** when present — commonly named `code/`, `disasm/`, `asm/`, or documented in root `AGENTS.md`. Read the path from project docs; do not assume a folder exists.
 4. **Generated recomp output** (`generated/` or project-equivalent) — shows what the toolchain emitted, not necessarily what PPC intended.
 5. **Handwritten hooks** (`src/`, `hooks/`) — host boundary; compare against PPC before changing guest semantics.

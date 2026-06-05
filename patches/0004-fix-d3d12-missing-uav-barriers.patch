@@ -1,0 +1,57 @@
+﻿diff --git a/include/rex/graphics/d3d12/texture_cache.h b/include/rex/graphics/d3d12/texture_cache.h
+index 4d845c7..e12abd1 100644
+--- a/include/rex/graphics/d3d12/texture_cache.h
++++ b/include/rex/graphics/d3d12/texture_cache.h
+@@ -342,6 +342,7 @@ class D3D12TextureCache final : public TextureCache {
+     }
+     // After an aliasing barrier (which is even stronger than an UAV barrier).
+     void ClearUAVBarrierPending() { uav_barrier_pending_ = false; }
++    bool IsUAVBarrierPending() const { return uav_barrier_pending_; }
+ 
+    private:
+     Microsoft::WRL::ComPtr<ID3D12Resource> resource_;
+diff --git a/src/graphics/d3d12/render_target_cache.cpp b/src/graphics/d3d12/render_target_cache.cpp
+index 8e269c4..08f0547 100644
+--- a/src/graphics/d3d12/render_target_cache.cpp
++++ b/src/graphics/d3d12/render_target_cache.cpp
+@@ -1875,10 +1875,15 @@ void D3D12RenderTargetCache::RequestPixelShaderInterlockBarrier() {
+ }
+ 
+ void D3D12RenderTargetCache::TransitionEdramBuffer(D3D12_RESOURCE_STATES new_state) {
+-  if (command_processor_.PushTransitionBarrier(edram_buffer_, edram_buffer_state_, new_state)) {
++  if (edram_buffer_state_ == new_state) {
++    if (new_state == D3D12_RESOURCE_STATE_UNORDERED_ACCESS &&
++        edram_buffer_modification_status_ != EdramBufferModificationStatus::kUnmodified) {
++      command_processor_.PushUAVBarrier(edram_buffer_);
++      edram_buffer_modification_status_ = EdramBufferModificationStatus::kUnmodified;
++    }
++  } else if (command_processor_.PushTransitionBarrier(edram_buffer_, edram_buffer_state_, new_state)) {
+     // Resetting edram_buffer_modification_status_ only if the barrier has been
+-    // truly inserted - in particular, not resetting it for UAV > UAV as
+-    // barriers are dropped if the state hasn't been changed.
++    // truly inserted.
+     edram_buffer_modification_status_ = EdramBufferModificationStatus::kUnmodified;
+   }
+   edram_buffer_state_ = new_state;
+diff --git a/src/graphics/d3d12/texture_cache.cpp b/src/graphics/d3d12/texture_cache.cpp
+index 2be0e8e..3436207 100644
+--- a/src/graphics/d3d12/texture_cache.cpp
++++ b/src/graphics/d3d12/texture_cache.cpp
+@@ -1333,8 +1333,15 @@ bool D3D12TextureCache::MakeScaledResolveRangeCurrent(uint32_t start_unscaled,
+ void D3D12TextureCache::TransitionCurrentScaledResolveRange(D3D12_RESOURCE_STATES new_state) {
+   assert_true(IsDrawResolutionScaled());
+   ScaledResolveVirtualBuffer& buffer = GetCurrentScaledResolveBuffer();
+-  command_processor_.PushTransitionBarrier(buffer.resource(), buffer.SetResourceState(new_state),
+-                                           new_state);
++  bool uav_barrier_pending = buffer.IsUAVBarrierPending();
++  D3D12_RESOURCE_STATES old_state = buffer.SetResourceState(new_state);
++  if (old_state == new_state) {
++    if (new_state == D3D12_RESOURCE_STATE_UNORDERED_ACCESS && uav_barrier_pending) {
++      command_processor_.PushUAVBarrier(buffer.resource());
++    }
++  } else {
++    command_processor_.PushTransitionBarrier(buffer.resource(), old_state, new_state);
++  }
+ }
+ 
+ void D3D12TextureCache::CreateCurrentScaledResolveRangeUintPow2SRV(

@@ -35,12 +35,47 @@
     {
       "id": 4,
       "prompt": "starting guardian heroes xbla from a LIVE package — want to use 360toolsUpdated like simpsons arcade. what order before rexglue codegen?",
-      "expected_output": "Track D: extract_stfs -> rexglue SDK -> rexglue init -> assets/default.xex -> rexglue codegen; optional xex_info/parse_xex_imports; cites track-360tools.md; does not recommend extract_pe or XenonRecomp for current fork",
+      "expected_output": "Track D: extract_stfs -> rexglue SDK -> rexglue init -> assets/default.xex -> rexglue codegen; optional xex_info/parse_xex_imports; cites 06-track-360tools.md; does not recommend extract_pe or XenonRecomp for current fork",
       "files": [],
       "expectations": [
         "Lists extract_stfs or extract_iso before rexglue codegen (not extract_pe before XenonRecomp)",
         "References 360toolsUpdated or DohmBoy64Bit/360toolsUpdated",
-        "Mentions rexglue init or rexglue codegen and ReXGlue SDK"
+        "Mentions rexglue init or rexglue codegen and ReXGlue SDK",
+        "References 06-track-360tools or resources/ track file (v1.4 layout)"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "empty folder — starting Guardian Heroes XBLA ReXGlue port. what should the agent do first this session?",
+      "expected_output": "Boot sequence: XBOX360_PROJECT_STATE from template, 11-operational-phases Phase 0, resources/ on-demand routing",
+      "files": [],
+      "expectations": [
+        "Mentions XBOX360_PROJECT_STATE or scripts/project-state-template",
+        "References 11-operational-phases or Phase 0 XEX reconnaissance",
+        "Uses resources/ on-demand routing (decision router, db-xbox360-index, or numbered resource file)"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "static recomp port — crash path shows mtctr r9 then bctrl. what evidence do i need before adding switch-table config?",
+      "expected_output": "23-xenon-execution-discipline: classify CTR source, evidence checklist, no config from guess; GhidraMCP/raw PPC",
+      "files": [],
+      "expectations": [
+        "Classifies CTR source (switch table, vtable, function pointer, import thunk, or unresolved)",
+        "Says not to add switch/indirect config from guess; requires GhidraMCP or raw PPC",
+        "References 23-xenon-execution-discipline or indirect control flow discipline resource"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "guardian heroes rexglue port — should i git apply all five 360tools patches to rexglue-sdk or skip them?",
+      "expected_output": "25-rexglue-sdk-patches: optional per title; source-of-truth SDK check + symptoms; 0001/0002/0005 vs 0003/0004 GPU; not all five blindly",
+      "files": [],
+      "expectations": [
+        "States patches are optional or not every game needs all five",
+        "References 25-rexglue-sdk-patches or rexglue_patches_audit or patches/0001",
+        "Requires SDK commit or symptom evidence before applying (source of truth)",
+        "Does not recommend applying all five patches blindly on every port"
       ]
     }
   ]
