@@ -1,10 +1,10 @@
 ---
 name: xbox360-decomp
 description: |
-  Xbox 360/XBLA RE and static-recomp (A ReXGlue, B XenonRecomp, C matching decomp, D 360tools+Xenon+ReXGlue). Use for default.xex, STFS/LIVE, Xenon PPC, guest vs host VA, ReXGlue hooks/config, Ghidra/XEXLoaderWV/GhidraMCP, switch/bctrl indirect, Xenos, decomp.me, ledgers, bring-up (unregistered VA, invalid/unregistered function, DEVICE_HUNG, endian, same crash twice)—Guardian Heroes, After Burner, Daytona, XBLA ports—even if they say 360 static recomp or PC port. PPC/Ghidra/code/ evidence; SDK file:line for hooks; stuck loop (repomix/SDK/ports) before repeat patches. Prefer 360tools skill for script-only (extract_stfs/pe, post_codegen, VdSwap/rdtsc) without Ghidra/stuck. NOT for OG .xbe (xboxrecomp), Win Unity/Unreal PE (windows-game-matching-decomp), Xenia, N64, homework/C++, malware, DRM bypass.
+  Xbox 360/XBLA RE and static-recomp (A ReXGlue, B XenonRecomp, C matching decomp, D 360toolsUpdated+ReXGlue). Use for default.xex, STFS/LIVE, Xenon PPC, guest vs host VA, ReXGlue hooks/config, Ghidra/XEXLoaderWV/GhidraMCP, switch/bctrl indirect, Xenos, decomp.me, ledgers, bring-up (unregistered VA, invalid/unregistered function, DEVICE_HUNG, endian, same crash twice)—Guardian Heroes, After Burner, Daytona, XBLA ports—even if they say 360 static recomp or PC port. PPC/Ghidra/code/ evidence; SDK file:line for hooks; stuck loop before repeat patches. Track D: DohmBoy64Bit/360toolsUpdated extract→rexglue init/codegen, templates/advanced, SDK patches 0001-0005. Prefer 360tools skill for extract-only without Ghidra/stuck. NOT for OG .xbe (xboxrecomp), Win Unity/Unreal PE, Xenia, N64, homework/C++, malware, DRM bypass.
 
 metadata:
-  mcpmarket-version: 1.2.0
+  mcpmarket-version: 1.3.0
 ---
 
 # Xbox 360 Reverse Engineering, Recompilation, and Full Decompilation
@@ -17,7 +17,7 @@ Lawful Xbox 360 / XBLA workflow hub: pick a track, verify evidence, open one ref
 
 | Skill | Use when |
 | --- | --- |
-| **360tools** | Track D command order, `extract_stfs`/`extract_pe`, XenonRecomp patches, `post_codegen` — user wants the sp00nznet pipeline, not full RE methodology |
+| **360tools** | Track D extraction + `rexglue init` quick path — user wants 360toolsUpdated scripts only, not full RE methodology |
 | **xboxrecomp** | Original Xbox `default.xbe`, x86, NV2A — not Xenon/XEX |
 | **windows-game-matching-decomp** | Win32/Unity/Unreal PE matching with no Xbox 360 context |
 
@@ -44,7 +44,7 @@ Read when the task needs depth. Do not load all files up front.
 | [references/track-rexglue.md](references/track-rexglue.md) | Track A phases R0-R6, codegen, launch |
 | [references/track-xenon.md](references/track-xenon.md) | Track B XenonRecomp / XenonAnalyse |
 | [references/track-full-decomp.md](references/track-full-decomp.md) | Track C matching / decomp.me |
-| [references/track-360tools.md](references/track-360tools.md) | Track D: sp00nznet/360tools — XBLA/ISO extract → PE → patched XenonRecomp → ReXGlue template |
+| [references/track-360tools.md](references/track-360tools.md) | Track D: 360toolsUpdated — XBLA/ISO extract → ReXGlue init/codegen → templates/advanced + SDK patches |
 | [references/rexglue-phases.md](references/rexglue-phases.md) | ReXGlue phases 1A-3, hook discipline |
 | [references/runtime-hooks.md](references/runtime-hooks.md) | Runtime boundary classification |
 | [references/rexglue-config.md](references/rexglue-config.md) | Config/manifest edit safety |
@@ -109,12 +109,12 @@ default.xex / extracted code/data
   -> handwritten C/C++ source that is checked against disassembly, traces, and behavior
   -> optional replacement modules or long-term source port
 
-Track D: 360tools pipeline (XenonRecomp codegen + ReXGlue runtime)
+Track D: 360toolsUpdated pipeline (ReXGlue-native)
 XBLA package or Xbox 360 ISO
-  -> 360tools extract_stfs / extract_iso / extract_pe
-  -> find_abi_addrs, extract_switch_tables, find_missing_vtable_funcs, parse_xex_imports
-  -> patched XenonRecomp -> generated C++
-  -> ReXGlue SDK + templates/project from 360tools
+  -> 360toolsUpdated extract_stfs / extract_iso (+ xex_info, parse_xex_imports)
+  -> ReXGlue SDK (+ optional patches/ 0001-0005)
+  -> rexglue init -> assets/default.xex -> rexglue codegen
+  -> cmake build; optional templates/advanced/
   -> native executable (see references/track-360tools.md)
 ```
 
@@ -124,14 +124,16 @@ Ask for track selection only when the user's goal is ambiguous. Otherwise infer 
 Mentions ReXGlue, reNut, TiP-Recomp, reDAHM, The Outfit ReXGlue project -> Track A.
 Mentions XenonRecomp, XenonAnalyse, Unleashed Recompiled, Sonic Unleashed, XenosRecomp -> Track B.
 Mentions matching, full decomp, source recreation, decomp.me, compiler matching, clean C/C++ source -> Track C.
-Mentions 360tools, sp00nznet, extract_stfs, extract_pe, find_abi_addrs, post_codegen, simpsonsarcade/vig8/gh2/ctxbla scaffold -> Track D.
-Mentions "PC port" without a tool -> explain tracks A–D; for new XBLA titles, often recommend D or A based on whether they want bundled extract/analysis scripts.
+Mentions 360toolsUpdated, 360tools, extract_stfs, rexglue init, templates/advanced, simpsonsarcade/vig8/gh2/ctxbla -> Track D.
+Legacy sp00nznet tree (extract_pe, XenonRecomp patches, post_codegen) -> Track D legacy section in track-360tools.md only after confirming their clone.
+Mentions "PC port" without a tool -> explain tracks A–D; for new XBLA titles, recommend D (360toolsUpdated) or A.
 ```
 
 Keep these boundaries:
 
-- ReXGlue-only (A) and 360tools (D) both may use ReXGlue runtime; D additionally standardizes XenonRecomp PE extraction, patches, and `templates/project`.
-- ReXGlue and XenonRecomp are not mandatory sequential stages outside Track D's documented pipeline.
+- ReXGlue-only (A) and 360toolsUpdated (D) both use ReXGlue codegen/runtime; D adds extraction scripts, `templates/advanced/`, and SDK `patches/`.
+- Track D (current fork) does **not** use XenonRecomp. Legacy sp00nznet/360tools XenonRecomp path is documented separately in track-360tools.md.
+- ReXGlue and XenonRecomp are not sequential stages unless the user is on the legacy 360tools tree or explicitly on Track B.
 - XenonAnalyse may assist a XenonRecomp workflow by producing or validating analysis metadata, but do not claim exact outputs or config fields without local evidence.
 - XenosRecomp is shader-focused and belongs with renderer/shader work, especially in a XenonRecomp-style project; do not confuse it with CPU recompilation.
 - Full decompilation is not the same as static recompilation. It prioritizes readable/rebuildable source and verified compiler behavior over immediate host runtime bring-up.

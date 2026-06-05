@@ -1,6 +1,6 @@
 # xbox360-decomp (Cursor Agent Skill)
 
-Agent skill for **Xbox 360 / XBLA reverse engineering and static recompilation** — ReXGlue (Track A), XenonRecomp / XenonAnalyse (Track B), matching / full decompilation (Track C), and [sp00nznet/360tools](https://github.com/sp00nznet/360tools) pipeline (Track D).
+Agent skill for **Xbox 360 / XBLA reverse engineering and static recompilation** — ReXGlue (Track A), XenonRecomp / XenonAnalyse (Track B), matching / full decompilation (Track C), and [360toolsUpdated](https://github.com/DohmBoy64Bit/360toolsUpdated) pipeline (Track D).
 
 This skill is a **methodology and reference layer** for the AI agent. It does **not** include game binaries, ReXGlue SDK, XenonRecomp, 360tools, or Ghidra.
 
@@ -10,7 +10,7 @@ This skill is a **methodology and reference layer** for the AI agent. It does **
 
 | Included in the skill | Not included (you provide separately) |
 |----------------------|----------------------------------------|
-| `SKILL.md` — track selection, evidence rules, stuck loop | Clones of [rexglue-sdk](https://github.com/rexglue/rexglue-sdk), [XenonRecomp](https://github.com/hedge-dev/XenonRecomp), [360tools](https://github.com/sp00nznet/360tools) |
+| `SKILL.md` — track selection, evidence rules, stuck loop | Clones of [rexglue-sdk](https://github.com/rexglue/rexglue-sdk), [360toolsUpdated](https://github.com/DohmBoy64Bit/360toolsUpdated); XenonRecomp only for Track B |
 | `references/` — Ghidra MCP, tracks, debug triage, XBLA/STFS | `default.xex`, STFS/LIVE packages, extracted assets (you must own the game) |
 | `evals/evals.json` (development only) | Ghidra, CMake, Clang/MSVC, Python per your track |
 
@@ -20,7 +20,7 @@ This skill is a **methodology and reference layer** for the AI agent. It does **
 
 - **Cursor** (or compatible agent) with skills support
 - **Lawful game files** — do not commit or redistribute retail XEX/assets
-- Tooling depends on track: ReXGlue SDK, patched XenonRecomp, 360tools, Ghidra 12.x + XEXLoaderWV + GhidraMCP
+- Tooling depends on track: ReXGlue SDK, [360toolsUpdated](https://github.com/DohmBoy64Bit/360toolsUpdated), Ghidra 12.x + XEXLoaderWV + GhidraMCP; XenonRecomp for Track B only
 
 See `references/dev-environment.md` and per-track files under `references/`.
 
@@ -48,7 +48,7 @@ The folder must contain `SKILL.md` at its root.
 |------------|----------------|
 | ZIP archive (`.skill` extension) | One-file install in Cursor |
 | `SKILL.md` + `references/` | Agent playbook for 360 RE / recomp |
-| Does **not** include upstream toolkits | Clone ReXGlue, XenonRecomp, 360tools separately |
+| Does **not** include upstream toolkits | Clone ReXGlue SDK and 360toolsUpdated separately |
 
 **Steps:**
 
@@ -77,7 +77,7 @@ Produces `xbox360-decomp.skill`. The packager skips `evals/` by default.
 3. Attach the **xbox360-decomp** skill or ask a matching task, for example:
    - *“Guest 0x82701234 unregistered VA — same crash twice after nulling a hook.”*
    - *“Set up Ghidra MCP for default.xex, image base 0x82000000.”*
-   - *“Guardian Heroes LIVE package — 360tools script order before XenonRecomp.”*
+   - *“Guardian Heroes LIVE package — 360toolsUpdated script order before rexglue codegen.”*
 
 The agent should verify commands and APIs from **your local SDK/tool trees**, not invent flags or hook macros.
 
@@ -88,9 +88,9 @@ The agent should verify commands and APIs from **your local SDK/tool trees**, no
 | **A** | ReXGlue codegen from XEX |
 | **B** | XenonRecomp / XenonAnalyse + project runtime |
 | **C** | Ghidra / matching / decomp.me → handwritten C++ |
-| **D** | 360tools extract → PE → patched XenonRecomp → ReXGlue `templates/project` |
+| **D** | 360toolsUpdated extract → `rexglue init` / `codegen` → optional `templates/advanced/` + SDK patches |
 
-Do not mix ReXGlue and XenonRecomp as sequential stages unless you are following Track D’s documented pipeline.
+Track D (current) is ReXGlue-native — no XenonRecomp step. Legacy sp00nznet/360tools XenonRecomp path is documented in `references/track-360tools.md`.
 
 ---
 
@@ -118,7 +118,7 @@ xbox360-decomp/
 
 | Skill | When |
 |-------|------|
-| **[360tools-skill](https://github.com/DohmBoy64Bit/360tools-skill)** | Script-only: `extract_stfs`, `post_codegen`, VdSwap / `__rdtsc` fixes |
+| **[360tools-skill](https://github.com/DohmBoy64Bit/360tools-skill)** | Extraction + ReXGlue quickstart (may lag 360toolsUpdated — verify repo) |
 | **[xboxrecomp-skill](https://github.com/DohmBoy64Bit/xboxrecomp-skill)** | Original Xbox `default.xbe` (x86), not Xenon |
 | **windows-game-matching-decomp** | Win32 / Unity / Unreal PE matching without 360 context |
 
@@ -130,7 +130,7 @@ xbox360-decomp/
 |----------|---------|
 | **This Git repo** | Source for `SKILL.md`, references, README |
 | **Release `xbox360-decomp.skill`** | Pre-built ZIP for Cursor install |
-| **Upstream toolkits** | ReXGlue, XenonRecomp, 360tools — always separate |
+| **Upstream toolkits** | ReXGlue SDK, 360toolsUpdated — always separate |
 
 ---
 
@@ -151,6 +151,7 @@ Built with **skill-creator**. Test prompts: `evals/evals.json`. Benchmark output
 
 - **Releases (`.skill` download):** https://github.com/DohmBoy64Bit/xbox360-decomp-skill/releases  
 - ReXGlue SDK: https://github.com/rexglue/rexglue-sdk  
-- XenonRecomp: https://github.com/hedge-dev/XenonRecomp  
-- 360tools: https://github.com/sp00nznet/360tools  
+- 360toolsUpdated: https://github.com/DohmBoy64Bit/360toolsUpdated  
+- XenonRecomp (Track B): https://github.com/hedge-dev/XenonRecomp  
+- Legacy 360tools: https://github.com/sp00nznet/360tools  
 - Xbox Dev Wiki: https://xboxdevwiki.net/  

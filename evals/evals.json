@@ -34,13 +34,13 @@
     },
     {
       "id": 4,
-      "prompt": "starting guardian heroes xbla from a LIVE package — want to use 360tools like simpsons arcade. what order do i run scripts before xenonrecomp?",
-      "expected_output": "Track D: extract_stfs -> extract_pe -> find_abi_addrs -> patched XenonRecomp -> switch/vtable scripts -> ReXGlue template; cites track-360tools.md; does not invent script flags",
+      "prompt": "starting guardian heroes xbla from a LIVE package — want to use 360toolsUpdated like simpsons arcade. what order before rexglue codegen?",
+      "expected_output": "Track D: extract_stfs -> rexglue SDK -> rexglue init -> assets/default.xex -> rexglue codegen; optional xex_info/parse_xex_imports; cites track-360tools.md; does not recommend extract_pe or XenonRecomp for current fork",
       "files": [],
       "expectations": [
-        "Lists extract_stfs or extract_iso then extract_pe before XenonRecomp",
-        "References 360tools repo or sp00nznet pipeline",
-        "Mentions ReXGlue SDK or templates/project after CPU codegen"
+        "Lists extract_stfs or extract_iso before rexglue codegen (not extract_pe before XenonRecomp)",
+        "References 360toolsUpdated or DohmBoy64Bit/360toolsUpdated",
+        "Mentions rexglue init or rexglue codegen and ReXGlue SDK"
       ]
     }
   ]

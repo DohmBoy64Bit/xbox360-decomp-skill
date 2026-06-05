@@ -5,7 +5,7 @@ Wrong XEX image base
 Wrong guest address / image offset mapping
 Bad function boundary
 Unresolved bctr/bctrl target
-Missing switch-table config (run extract_switch_tables.py on Track D)
+Missing switch-table config (Track D: add [[switch_tables]] in TOML; fallback extract_switch_tables.py)
 Vtable slot misidentified
 Import thunk treated as game logic
 Guest pointer treated as host pointer
@@ -28,21 +28,21 @@ GhidraMCP installed but plugin/server/bridge not running
 MCP frontend config path guessed incorrectly or overwritten without backup
 Wrong direct-CLI vs CMake-codegen-target assumption
 Built exe cannot locate assets because runtime expects a different working directory or asset argument
-PE extract failed (Track D: re-run extract_pe.py / xex_info.py)
-Forgot post_codegen.py after rexglue codegen (Track D)
-VdSwap / timebase half-speed (Track D: docs/speed-fix.md)
+Extract failed (Track D: re-run extract_stfs.py / extract_xex_direct.py / xex_info.py)
+Missing ReXGlue SDK patch (Track D: see patches/rexglue_patches_audit.md — setjmp, switch discovery, D3D12 UAV)
+VdSwap half-speed (Track D: docs/speed-fix.md QPC limiter — not legacy __rdtsc scaling)
 ```
 
 Map each failure to one layer:
 
 ```text
-Input asset / XBLA extract (360tools)
-PE image / XenonRecomp TOML
-XenonRecomp translation
-ReXGlue config/manifest
+Input asset / XBLA extract (360toolsUpdated)
+default.xex path / assets layout
+ReXGlue SDK + patches/ applied
+mygame_config.toml / codegen
 Generated code
 Hook layer
-Runtime/platform shim (templates/project)
+Runtime/platform shim (templates/advanced, stubs)
 Host build system
 Host graphics/audio/input backend
 Documentation/test process
