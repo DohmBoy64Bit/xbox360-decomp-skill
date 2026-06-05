@@ -4,7 +4,7 @@ description: |
   Xbox 360/XBLA RE and static-recomp (A ReXGlue, B XenonRecomp, C matching decomp, D 360toolsUpdated+ReXGlue). Use for default.xex, STFS/LIVE, Xenon PPC, guest vs host VA, ReXGlue hooks/config, Ghidra/XEXLoaderWV/GhidraMCP, switch/bctrl indirect, Xenos, decomp.me, ledgers, bring-up (unregistered VA, invalid/unregistered function, DEVICE_HUNG, endian, same crash twice)—Guardian Heroes, After Burner, Daytona, XBLA ports—even if they say 360 static recomp or PC port. PPC/Ghidra/code/ evidence; SDK file:line for hooks; stuck loop before repeat patches. Track D: DohmBoy64Bit/360toolsUpdated extract→rexglue init/codegen, templates/advanced, SDK patches 0001-0005. Prefer 360tools skill for extract-only without Ghidra/stuck. NOT for OG .xbe (xboxrecomp), Win Unity/Unreal PE, Xenia, N64, homework/C++, malware, DRM bypass.
 
 metadata:
-  mcpmarket-version: 1.4.3
+  mcpmarket-version: 1.4.4
 ---
 
 # Xbox 360 Decomp — Behavioral Constraint System
