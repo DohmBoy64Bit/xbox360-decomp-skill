@@ -134,9 +134,62 @@ xbox360-decomp/
 
 ---
 
+## Track D quick pipeline (360toolsUpdated)
+
+From [DohmBoy64Bit/360toolsUpdated](https://github.com/DohmBoy64Bit/360toolsUpdated) — **ReXGlue-native** (no `extract_pe`, no XenonRecomp):
+
+```bash
+# 360toolsUpdated repo root
+pip install -r requirements.txt
+python tools/extract_stfs.py path/to/LIVE_PACKAGE extracted/
+
+git clone --recursive https://github.com/rexglue/rexglue-sdk.git tools/rexglue-sdk
+# optional: apply patches/0001-0005 per patches/rexglue_patches_audit.md
+
+rexglue init --app_name mygame --app_root my_project/
+cp extracted/default.xex my_project/assets/
+rexglue codegen mygame_config.toml
+
+cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release
+```
+
+Optional: `xex_info.py` / `parse_xex_imports.py` before codegen; copy `templates/advanced/` after init; VdSwap QPC fix in `docs/speed-fix.md`. Legacy XenonRecomp path (`extract_pe`, `post_codegen`) is **sp00nznet/360tools only** — see `references/track-360tools.md`.
+
+---
+
 ## Development / evals
 
-Built with **skill-creator**. Test prompts: `evals/evals.json`. Benchmark output can live in `xbox360-decomp-workspace/` (not shipped in `.skill`).
+Built with **skill-creator**. Test prompts: `evals/evals.json`. Benchmark runs live in `xbox360-decomp-workspace/iteration-N/` (not shipped in `.skill`).
+
+| Iteration | Skill version | Result |
+|-----------|---------------|--------|
+| 1 | v1.2.0 | 100% pass both configs; Track D eval still used legacy XenonRecomp order |
+| 2 | v1.3.0 | 100% pass both configs; **Track D eval fixed** — `extract_stfs` → `rexglue codegen`; stuck eval cites SDK `file:line` |
+
+Review HTML: `xbox360-decomp-workspace/iteration-2/review.html` (compare vs iteration-1).
+
+To repackage after edits:
+
+```powershell
+robocopy xbox360-decomp _pkg\xbox360-decomp /E /XD .git dist
+python -m scripts.package_skill _pkg\xbox360-decomp release
+```
+
+---
+
+## Changelog
+
+### v1.3.1
+- README: Track D quick pipeline, eval iteration summary, repackage notes
+
+### v1.3.0
+- **Track D rewrite** for [360toolsUpdated](https://github.com/DohmBoy64Bit/360toolsUpdated) ReXGlue-native workflow
+- Removed XenonRecomp/`extract_pe`/`post_codegen` from current Track D; added SDK patches `0001`–`0005`, `templates/advanced/`
+- Iteration-2 evals validate new pipeline
+
+### v1.2.0
+- Initial public release; optimized trigger description
 
 ---
 
